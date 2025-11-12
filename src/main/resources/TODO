@@ -1,0 +1,9 @@
+1. Authentication service:
+- RegisterUser (RegisterRequest request)
+- Login(LoginRequest request)
+- Logout()
+- UpdateUserInformation
+  * Password
+
+2. BloodRequest service:
+- Create bloodR

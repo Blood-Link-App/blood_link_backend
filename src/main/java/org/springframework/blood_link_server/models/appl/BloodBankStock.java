@@ -27,7 +27,7 @@ public class BloodBankStock {
     private UUID id;
 
     @Column(name = "total_quantity", nullable = false)
-    private int totalQuantity;
+    private long totalQuantity;
 
 
     @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true)
@@ -46,9 +46,13 @@ public class BloodBankStock {
         this.stockByTypeList.add(type);
     }
 
+    @PrePersist
     public void updateTotalQuantity () {
-        for (StockByType type : stockByTypeList) {
-            totalQuantity += type.getQuantity();
-        }
+
+//        totalQuantity = 0;
+        totalQuantity = getStockByTypeList().stream().mapToLong(StockByType::getQuantity).sum();
+//        for (StockByType type : stockByTypeList) {
+//            totalQuantity += type.getQuantity();
+//        }
     }
 }

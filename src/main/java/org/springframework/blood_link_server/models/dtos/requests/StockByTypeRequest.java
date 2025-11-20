@@ -1,16 +1,19 @@
 package org.springframework.blood_link_server.models.dtos.requests;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.blood_link_server.models.enumerations.BloodType;
 
 @Getter
 @Setter
-@RequiredArgsConstructor
+@AllArgsConstructor
 @Builder
+
 public class StockByTypeRequest {
     private BloodType bloodType;
-    private Integer quantity;
+    private Long quantity;
+
+/*    public StockByTypeRequest(BloodType bloodType, Long quantity){
+        this.bloodType = bloodType;
+        this.quantity = quantity;
+    }*/
 }

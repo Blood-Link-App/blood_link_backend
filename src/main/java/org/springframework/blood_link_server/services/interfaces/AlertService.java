@@ -8,7 +8,9 @@ import java.util.List;
 
 public interface AlertService {
 
-    Alert createSendAlert(BloodRequest request, List<BloodType> compatibleDonors);
+    Alert createSendAlert(BloodRequest request);
+
+    Alert createSendAlert(String username, BloodType bloodTypeNeeded);
 
     List <Alert> getAllAlerts();
 }

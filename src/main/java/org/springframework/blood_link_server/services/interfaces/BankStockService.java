@@ -1,5 +1,6 @@
 package org.springframework.blood_link_server.services.interfaces;
 
+import jakarta.security.auth.message.AuthException;
 import org.springframework.blood_link_server.models.appl.BloodBankStock;
 import org.springframework.blood_link_server.models.appl.StockByType;
 import org.springframework.blood_link_server.models.dtos.requests.StockByTypeRequest;
@@ -13,10 +14,10 @@ public interface BankStockService {
 
     BloodBankStock createStockByType(String username, StockByTypeRequest request);
 
-    StockByType increaseQuantity(Integer quantity, UUID stockId);
+    StockByType increaseQuantity(String username, Long quantity, UUID stockId) throws AuthException;
 
-    StockByType decreaseQuantity(Integer quantity, UUID stockId);
+    StockByType decreaseQuantity(String username, Long quantity, UUID stockId) throws AuthException;
 
-    int updateTotalQuantity(String username);
+    long updateTotalQuantity(String username);
 
 }

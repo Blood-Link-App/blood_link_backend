@@ -1,5 +1,6 @@
 package org.springframework.blood_link_server.services.implementations;
 
+import jakarta.security.auth.message.AuthException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.blood_link_server.models.appl.BloodBankStock;
 import org.springframework.blood_link_server.models.appl.StockByType;
@@ -26,9 +27,9 @@ public class BankStockServiceImpl implements BankStockService {
     private final StockByTypeRepository typeRepository;
 
     /**
-     * @param username
-     * @param request
-     * @return
+     * @param username the current bloodbank connected
+     * @param request is the dto necessary to create a stock by type
+     * @return the updated BloodBank
      */
     @Override
     public BloodBankStock createStockByType(String username, StockByTypeRequest request) {
@@ -50,12 +51,19 @@ public class BankStockServiceImpl implements BankStockService {
     }
 
     /**
-     * @param quantity
-     * @param stockId
-     * @return
+     * @param username of the connected blood bank
+     * @param quantity to increase the quantity of  current stock
+     * @param stockId  the stock to increase in the stock
+     * @return the increased stock
      */
     @Override
-    public StockByType increaseQuantity(Integer quantity, UUID stockId) {
+    public StockByType increaseQuantity(String username, Long quantity, UUID stockId) throws AuthException {
+        BloodBank bank = bankRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("Not found"));
+        StockByType stock1 = typeRepository.findById(stockId).orElseThrow(() -> new UsernameNotFoundException("Not found bb"));
+        long stockCount =  bank.getStock().getStockByTypeList().stream().filter(s -> s== stock1).count();
+        if(stockCount == 0){
+            throw new AuthException("not authorized");
+        }
         if (quantity <= 0) throw new IllegalStateException("negative quantity");
         StockByType stock = typeRepository.findById(stockId).orElseThrow(() -> new UsernameNotFoundException("Not found"));
         stock.upgradeQuantity(quantity);
@@ -64,25 +72,33 @@ public class BankStockServiceImpl implements BankStockService {
     }
 
     /**
-     * @param quantity
-     * @param stockId
-     * @return
+     * @param username of the connected blood bank
+     * @param quantity to decrease the quantity of  current stock
+     * @param stockId  the stock to decrease in the stock
+     * @return the decreased stock
      */
     @Override
-    public StockByType decreaseQuantity(Integer quantity, UUID stockId) {
-        if (quantity >= 0) throw new IllegalStateException("positive quantity");
+    public StockByType decreaseQuantity(String username, Long quantity, UUID stockId) throws AuthException {
+        BloodBank bank = bankRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("Not found"));
         StockByType stock = typeRepository.findById(stockId).orElseThrow(() -> new UsernameNotFoundException("Not found"));
-        stock.upgradeQuantity(-quantity);
+        long stockCount =  bank.getStock().getStockByTypeList().stream().filter(s -> s== stock).count();
+        if(stockCount == 0){
+            throw new AuthException("not authorized");
+        }
+        if (quantity >= 0) throw new IllegalStateException("positive quantity");
+        if(-quantity > stock.getQuantity()) throw new ArrayStoreException("out of range");
+        stock.upgradeQuantity(quantity);
 
-        return typeRepository.save(stock);
+        StockByType saved = typeRepository.save(stock);
+        updateTotalQuantity(username);
+        return saved;
     }
 
     /**
-     * @return
+     * @return the new quantity in stock
      */
     @Override
-    public int updateTotalQuantity(String username) {
-
+    public long updateTotalQuantity(String username) {
         BloodBank bank  = bankRepository.findByEmail(username).orElseThrow(() ->new UsernameNotFoundException("User not found"));
         BloodBankStock stock = bank.getStock();
         stock.updateTotalQuantity();

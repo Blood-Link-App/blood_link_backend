@@ -1,10 +1,17 @@
 package org.springframework.blood_link_server.models.medicalProfile;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+
+@Getter
+@Setter
+@NoArgsConstructor
 
 @Entity
 @Table(name = "health_questions")
@@ -41,7 +48,18 @@ public class HealthQuestions {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+
+    public HealthQuestions(boolean hasTattoosWithinLast6Months , boolean hasSurgeryWithinLast6_12Months, boolean hasChronicalIllness, boolean hasTravelledWithinLast3Months, boolean hasPiercingWithinLast7Months , boolean isOnMedication){
+        this.hasTravelledWithinLast3Months = hasTravelledWithinLast3Months;
+        this.hasChronicalIllness = hasChronicalIllness;
+        this.hasTattoosWithinLast6Months = hasTattoosWithinLast6Months;
+        this.hasSurgeryWithinLast6_12Months = hasSurgeryWithinLast6_12Months;
+        this.isOnMedication = isOnMedication;
+
+    }
+
     public boolean hasDeferralIssues(){
-        return hasTattoosWithinLast6Months || hasSurgeryWithinLast6_12Months || hasChronicalIllness || hasPiercingWithinLast7Months || hasTravelledWithinLast3Months || isOnMedication;
+        return
+                hasTattoosWithinLast6Months || hasSurgeryWithinLast6_12Months || hasChronicalIllness || hasPiercingWithinLast7Months || hasTravelledWithinLast3Months || isOnMedication;
     }
 }

@@ -27,7 +27,7 @@ public class StockByType {
     private BloodType bloodType;
 
     @Column(name = "quantity", nullable = false)
-    private Integer quantity;
+    private Long quantity; // I've changed the type from Integer to Long
 
 
     @CreationTimestamp
@@ -38,7 +38,7 @@ public class StockByType {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    public void upgradeQuantity(Integer quantity){
+    public void upgradeQuantity(long quantity){
         this.quantity += quantity;
     }
 }

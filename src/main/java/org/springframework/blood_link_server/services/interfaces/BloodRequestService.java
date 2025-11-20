@@ -11,10 +11,15 @@ public interface
 BloodRequestService {
 
     List<BloodRequest> sendRequests(String username, BloodDemandRequest request);
+
    // Set<BloodRequest> sendRequests1(String username, BloodDemandRequest request);
 
     List<BloodRequest> getPendingBloodRequests(RequestStatus status);
 
-    void processingBloodRequest(String username, UUID requestId);
+    //List<BloodRequest> getPendingBloodRequestsByIdAndStatus(RequestStatus status);
+
+    List<BloodRequest> getPendingBloodRequestsByIdAndStatus(UUID bankId, RequestStatus status);
+
+    BloodRequest processingBloodRequest(String username, UUID requestId);
 
 }

@@ -43,7 +43,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         validateUniqueConstraints(request);
 
-
         User user = createUserByRole(request);
 
         setCommonProperties(user, request);

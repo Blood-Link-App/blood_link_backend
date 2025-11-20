@@ -1,11 +1,16 @@
 package org.springframework.blood_link_server.models.medicalProfile;
 
 import jakarta.persistence.*;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+
+@Getter
+@Setter
+@NoArgsConstructor
 
 @Entity
 @Table(name = "vital_signs")
@@ -32,10 +37,14 @@ public class VitalSigns {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    public VitalSigns(float hemoglobinLevel, float bodyTemperature, float pulseRate) {
+        this.bodyTemperature =  bodyTemperature;
+        this.hemoglobinLevel = hemoglobinLevel;
+        this.pulseRate = pulseRate;
+    }
+
+
     public boolean meetDonationCriteria(){
-        if ((hemoglobinLevel >= 12.0) && (bodyTemperature <= 38) && (bodyTemperature >= 37) && (pulseRate <= 100) && (pulseRate >= 50)) {
-            return true;
-        }
-        else return false;
+        return (hemoglobinLevel >= 12.0) && (bodyTemperature <= 38) && (bodyTemperature >= 37) && (pulseRate <= 100) && (pulseRate >= 50);
     }
 }

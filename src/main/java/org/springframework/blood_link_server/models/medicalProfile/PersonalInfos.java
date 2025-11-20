@@ -1,6 +1,7 @@
 package org.springframework.blood_link_server.models.medicalProfile;
 
 import jakarta.persistence.*;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.blood_link_server.models.enumerations.Gender;
@@ -8,6 +9,12 @@ import org.springframework.blood_link_server.models.enumerations.Gender;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
+
+@Getter
+@Setter
+
+@NoArgsConstructor
+
 
 @Entity
 @Table(name = "personal_infos")
@@ -37,7 +44,14 @@ public class PersonalInfos {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    public PersonalInfos(LocalDate birthdate, Gender gender, float weight, String emergencyContact) {
+        this.birthdate = birthdate;
+        this.gender = gender;
+        this.weight = weight;
+        this.emergencyContact = emergencyContact;
+    }
+
     public int getAge(){
-        return birthdate.getYear()-LocalDate.now().getYear();
+        return -birthdate.getYear() + LocalDateTime.now().getYear();
     }
 }

@@ -39,29 +39,4 @@ public class DonorController {
             }
         }
 
-/*    @PostMapping("affiliation-donor-blood-bank{bankId}")
-        public ResponseEntity<String> affiliateDonorToBloodBank(@AuthenticationPrincipal UserDetails userDetails, @PathVariable UUID bankId){
-            try {
-
-                String username = userDetails.getUsername();
-                donorService.affiliateDonorToBloodBank(username, bankId);
-                return ResponseEntity.ok("Successful affiliation");
-            }catch (ConfigDataResourceNotFoundException e){
-                return ResponseEntity
-                        .status(HttpStatus.NOT_FOUND)
-                        .body(e.getMessage());
-
-            }
-    }*/
-
-
-/*
-    @DeleteMapping("remove-affiliation/{bank-id}")
-    public ResponseEntity<?> removeAffiliation(HttpServletRequest request, UUID bankId) {
-        try{
-
-        }
-        return null;
-    }*/
-
 }

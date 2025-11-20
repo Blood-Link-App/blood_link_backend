@@ -26,9 +26,7 @@ public class BankStockController {
     @PostMapping(value = "create", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> create(HttpServletRequest httpRequest, @RequestBody StockByTypeRequest stockByTypeRequest) {
         try {
-            final String authHeader = httpRequest.getHeader("Authorization");
-            var jwt = authHeader.substring(7);
-            var username = jwtService.extractUsername(jwt);
+            var username = getUsername(httpRequest);
 
             BloodBankStock bankStock = bankStockService.createStockByType(username, stockByTypeRequest);
             if (bankStock == null)
@@ -40,10 +38,11 @@ public class BankStockController {
         }
     }
 
-    @PutMapping("increase/id={stockId}/quantity={quantity}")
-    public ResponseEntity<?> upgradeQuantity(@PathVariable Integer quantity, @PathVariable UUID stockId) {
+    @PutMapping("update-stock/id={stockId}/quantity={quantity}")
+    public ResponseEntity<?> upgradeQuantity(HttpServletRequest httpRequest, @PathVariable long quantity, @PathVariable UUID stockId) {
         try {
-            StockByType stockByType = quantity >= 0 ? bankStockService.increaseQuantity(quantity, stockId) : bankStockService.decreaseQuantity(quantity, stockId);
+            var username = getUsername(httpRequest);
+            StockByType stockByType = quantity >= 0 ? bankStockService.increaseQuantity(username, quantity, stockId) : bankStockService.decreaseQuantity(username, quantity, stockId);
             return ResponseEntity.ok(stockByType);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
@@ -54,16 +53,20 @@ public class BankStockController {
     @GetMapping("/update-total-quantity")
     public ResponseEntity<?> updateTotalQuantity(HttpServletRequest http) {
         try {
-            final String authHeader = http.getHeader("Authorization");
-            var jwt = authHeader.substring(7);
-            var username = jwtService.extractUsername(jwt);
+            var username = getUsername(http);
 
-            Integer quantity = bankStockService.updateTotalQuantity(username);
+            long quantity = bankStockService.updateTotalQuantity(username);
             return ResponseEntity.ok(quantity);
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error");
         }
 
+    }
+
+    private String getUsername(HttpServletRequest http) {
+        final String authHeader = http.getHeader("Authorization");
+        var jwt = authHeader.substring(7);
+        return jwtService.extractUsername(jwt);
     }
 
 }

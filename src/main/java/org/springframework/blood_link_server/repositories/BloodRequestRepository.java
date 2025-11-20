@@ -14,4 +14,9 @@ public interface BloodRequestRepository extends JpaRepository<BloodRequest, UUID
     List<BloodRequest> findBloodRequestsByStatus(RequestStatus status);
 
     List<BloodRequest> findByBloodBankAndStatus(BloodBank bloodBank, RequestStatus status);
+
+    List<BloodRequest> findByIdAndStatus(UUID id, RequestStatus status);
+
+    List<BloodRequest> findByGroupRequestId(UUID groupRequestId);
+
 }

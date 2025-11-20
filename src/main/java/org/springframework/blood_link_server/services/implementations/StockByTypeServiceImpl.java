@@ -16,7 +16,7 @@ import java.util.List;
 public class StockByTypeServiceImpl implements StockByTypeService {
 
     private final StockByTypeRepository typeRepository;
-    private  BloodType bloodType;
+    //private  BloodType bloodType;
 
     /**
      * @param request is the parameter sent to check if there's enough blood in the stock
@@ -29,7 +29,7 @@ public class StockByTypeServiceImpl implements StockByTypeService {
         }
 
         StockByType stock = typeRepository.findStockByBloodType(request.getBloodType())
-                .orElseThrow(() -> new UsernameNotFoundException("Unavailable stock"));;
+                .orElseThrow(() -> new UsernameNotFoundException("Unavailable stock"));
 
 
         return  (stock.getBloodType() == request.getBloodType() && stock.getQuantity() >= request.getQuantity());
@@ -42,7 +42,7 @@ public class StockByTypeServiceImpl implements StockByTypeService {
     @Override
     public Boolean checkAvailabilityWithCompatibility(StockByTypeRequest request) {
         List<BloodType> compatibleTypes = BloodType.getCompatibleDonors(request.getBloodType());
-        int totalAvailable = 0;
+        Long totalAvailable = 0L;
         List<StockByType> stocks = typeRepository.findByBloodTypeIn(compatibleTypes);
         for (StockByType stock : stocks){
            totalAvailable = stock.getQuantity();

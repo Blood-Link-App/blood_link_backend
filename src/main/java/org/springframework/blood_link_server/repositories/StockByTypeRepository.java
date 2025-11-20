@@ -24,4 +24,7 @@ public interface StockByTypeRepository extends JpaRepository<StockByType, UUID> 
     /*   // List<StockByType> findAllByBloodType(BloodType bloodType);
 
     //List<StockByType> findAllByBloodType(List<BloodType> types);*/
+
+//    @Query("SELECT bs FROM BloodBankStock bs INNER JOIN  StockByType st ON bs.id = st.stock_type_id ")
+//    Optional<BloodBankStock> findBloodBankByStockId(UUID stockId);
 }

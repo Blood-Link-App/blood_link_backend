@@ -1,12 +1,19 @@
 package org.springframework.blood_link_server.models.appl;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.blood_link_server.events.NotificationCreatedEvent;
 import org.springframework.blood_link_server.models.enumerations.AlertStatus;
 import org.springframework.blood_link_server.models.metiers.Donor;
+import org.springframework.data.domain.AfterDomainEventPublication;
+import org.springframework.data.domain.DomainEvents;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -15,7 +22,7 @@ import java.util.UUID;
 @NoArgsConstructor
 
 @Entity
-@Table(name="notification")
+@Table(name = "notification")
 
 public class Notification {
     @Id
@@ -39,7 +46,7 @@ public class Notification {
     @JoinColumn(name = "donor_response_id")
     private DonorResponse donorResponse;
 
-        /*    @DomainEvents
+    @DomainEvents
     public List<Object> domainEvents() {
         return List.of(new NotificationCreatedEvent(this));
     }
@@ -47,5 +54,5 @@ public class Notification {
     @AfterDomainEventPublication
     public void callback() {
 
-    }*/
+    }
 }

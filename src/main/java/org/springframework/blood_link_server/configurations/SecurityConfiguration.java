@@ -30,14 +30,39 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
+
+
+
                         .requestMatchers("/api/v1/auth/signUp").permitAll()
                         .requestMatchers("/api/v1/auth/logIn").permitAll()
+                        .requestMatchers("/ws/**").permitAll()
+
+/*=============================================================================Specific questions to donors============================================================================*/
+
+
                         .requestMatchers("/api/v1/donor/**").hasRole(DONOR.name())
-                        .requestMatchers("/api/blood-request/create").hasRole(DOCTOR.name())
+                        .requestMatchers("/api/v1/medical-profile/create-profile").hasRole(DONOR.name())
+                        .requestMatchers("/api/v1/medical-profile/get-profile").hasRole(DONOR.name())
+                        .requestMatchers("/api/v1/medical-profile/update-profile").hasRole(DONOR.name())
+
+
+/*=============================================================================Specific questions to doctors============================================================================*/
+
+
+                                .requestMatchers("/api/blood-request/create").hasRole(DOCTOR.name())
+
+
+/*=============================================================================Specific questions to blood banks============================================================================*/
+
+
+                                .requestMatchers("/api/blood-request/get-pending-bloodRequests-by-bloodbank/").hasRole(BLOODBANK.name())
+                        .requestMatchers("/api/blood-request/process-request/**").hasRole(BLOODBANK.name())
                         .requestMatchers("/api/v1/bank-stock/**").hasRole(BLOODBANK.name())
                         .requestMatchers("/api/v1/bloodbank/initialize-blood-bank-stocks").hasRole(BLOODBANK.name())
                         .requestMatchers("/api/v1/bank-stock/update-total-quantity").hasRole(BLOODBANK.name())
-                        //.requestMatchers("/api/blood-request/create1").hasRole(UserRole.DOCTOR.name())
+                        .requestMatchers("/api/v1/bank-stock/increase/").hasRole(BLOODBANK.name())
+                        .requestMatchers("/api/v1/alert/create-alert/**").hasRole(BLOODBANK.name())
+
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

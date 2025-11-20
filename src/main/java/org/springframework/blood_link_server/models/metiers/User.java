@@ -93,6 +93,6 @@ public class User implements UserDetails {
     }
 
 
-    //TODO: Has to be completed. ADD USER DETAILS ATTRIBUTES
+
 
 }

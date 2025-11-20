@@ -1,34 +1,38 @@
 package org.springframework.blood_link_server.services.implementations;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.blood_link_server.models.appl.Alert;
+import org.springframework.blood_link_server.models.appl.BloodBankStock;
 import org.springframework.blood_link_server.models.appl.BloodRequest;
+import org.springframework.blood_link_server.models.appl.StockByType;
 import org.springframework.blood_link_server.models.dtos.requests.BloodDemandRequest;
-import org.springframework.blood_link_server.models.dtos.requests.StockByTypeRequest;
 import org.springframework.blood_link_server.models.enumerations.BloodType;
 import org.springframework.blood_link_server.models.enumerations.RequestStatus;
+import org.springframework.blood_link_server.models.metiers.BloodBank;
 import org.springframework.blood_link_server.models.metiers.Doctor;
 import org.springframework.blood_link_server.repositories.BloodBankRepository;
 import org.springframework.blood_link_server.repositories.BloodRequestRepository;
 import org.springframework.blood_link_server.repositories.DoctorRepository;
+import org.springframework.blood_link_server.repositories.StockByTypeRepository;
 import org.springframework.blood_link_server.services.interfaces.AlertService;
 import org.springframework.blood_link_server.services.interfaces.BloodRequestService;
-import org.springframework.blood_link_server.services.interfaces.StockByTypeService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static org.springframework.blood_link_server.models.enumerations.BloodType.getCompatibleDonors;
 
 @Service
 @RequiredArgsConstructor
 public class BloodRequestServiceImpl implements BloodRequestService {
 
-    //final UserRepository userRepository;
     final BloodBankRepository bloodBankRepository;
     final BloodRequestRepository bloodRequestRepository;
     final DoctorRepository doctorRepository;
-    final StockByTypeService stockByTypeService;
+    final StockByTypeRepository typeRepository;
     private final AlertService alertService;
 
     /**
@@ -36,21 +40,19 @@ public class BloodRequestServiceImpl implements BloodRequestService {
      * @param request is the pattern of all the blood requests
      * @return a list of blood requests
      */
+
+
     @Override
     public List<BloodRequest> sendRequests(String username, BloodDemandRequest request){
 
-       /* username = SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getName();
-*/
+
         if(verifyCreate(request)){
             return null;
         }
 
         Doctor doctor = doctorRepository.findDoctorByEmail(username).orElseThrow(() -> new RuntimeException("No doctor found"));
-/*        Doctor doctor = (Doctor) userRepository.findByEmail(username).orElse(null);
-        if (doctor == null)
-            return List.of(null);*/
+
+
 
         final UUID groupRequestId = UUID.randomUUID();
         List<BloodRequest> bloodRequests = request.getBankNames().stream().map(name ->
@@ -65,83 +67,92 @@ public class BloodRequestServiceImpl implements BloodRequestService {
                 ).collect(Collectors.toList());
 
 
-
-
-/*
-       boolean test = bloodRequestRepository.findAll(bloodRequests);
-        if(test) {
-            return bloodRequestRepository.saveAllAndFlush(bloodRequests);
-        }*/
         return bloodRequestRepository.saveAllAndFlush(bloodRequests);
-        //return null;
     }
+
+
 
     /**
      * @param status is the parameter needed to find pending blood requests
      * @return a list of pending blood requests
      */
+
+    //@PreAuthorize("hasRole(T(org.springframework.blood_link_server.models.enumerations.UserRole).BLOODBANK.name())")
     @Override
     public List<BloodRequest> getPendingBloodRequests(RequestStatus status) {
         return bloodRequestRepository.findBloodRequestsByStatus(status) /*List.of()*/;
     }
 
     /**
-     * @param requestId is the parameter needed to find a blood request and process it
+     * @param status pending
+     * @return a list of pending blood requests
      */
     @Override
-    public void processingBloodRequest(String username, UUID requestId) {
-        BloodRequest request = bloodRequestRepository.findById(requestId).orElseThrow(() -> new IllegalArgumentException("Blood request not found"));
-
-        StockByTypeRequest stockByTypeRequest = StockByTypeRequest.builder()
-                .bloodType(request.getRecipientType())
-                .quantity(Math.toIntExact(request.getQuantityNeeded()))
-                .build();
-
-
-
-        boolean available = stockByTypeService.checkAvailability(stockByTypeRequest) && stockByTypeService.checkAvailabilityWithCompatibility(stockByTypeRequest);
-        if (available) {
-            request.setStatus(RequestStatus.COMPLETED);
-            bloodRequestRepository.save(request);
-            return;
+    public List<BloodRequest> getPendingBloodRequestsByIdAndStatus(UUID bankId, RequestStatus status) {
+        if (bloodBankRepository.findById(bankId).isEmpty()){
+            return null ;
         }
-
-        Alert alert = alertService.createSendAlert(request, BloodType.getCompatibleDonors(request.getRecipientType()));
-        request.setAlert(alert);
-
-        request.setStatus(RequestStatus.PROCESSING);
-        bloodRequestRepository.save(request);
-
+        return bloodRequestRepository.findByIdAndStatus(bankId, status)
+                /*List.of()*/;
     }
 
 
+    // Process the blood request after receiving it
+
+    /**
+     * @param username  is the parameter needed to find pending blood requests
+     * @param requestId a list of pending blood requests
+     * @return either ...
+     */
 
 
-/*
     @Override
-    public Set<BloodRequest> sendRequests1(String username, BloodDemandRequest request) {
+    public BloodRequest processingBloodRequest(String username, UUID requestId) {
 
-        if(verifyCreate(request)){
-            return null;
+        BloodRequest request = bloodRequestRepository.findById(requestId).orElseThrow(() -> new EntityNotFoundException("Blood bank not found"));
+
+        BloodBank bank = request.getBloodBank();
+        BloodBankStock bankStock = bank.getStock();
+
+        List<BloodType> compatibleTypes = getCompatibleDonors(request.getRecipientType());
+
+        Optional<StockByType> availableStocks = bankStock.getStockByTypeList().stream()
+                .filter(s -> compatibleTypes.contains(s.getBloodType()) && s.getQuantity() > request.getQuantityNeeded())
+                .findFirst();
+
+        BloodRequest response;
+
+        if(availableStocks.isPresent()){
+
+            StockByType availableStockType = availableStocks.get();
+            availableStockType.setQuantity(availableStockType.getQuantity() - request.getQuantityNeeded());
+            typeRepository.save(availableStockType);
+
+            request.setStatus(RequestStatus.COMPLETED);
+            response = bloodRequestRepository.save(request);
+
+            List<BloodRequest> otherRequests = bloodRequestRepository.findByGroupRequestId(request.getGroupRequestId()).stream()
+                    .filter(r -> r.getId() != request.getId())
+                    .toList();
+
+            if (!otherRequests.isEmpty())
+                for (BloodRequest otherRequest : otherRequests) {
+                    otherRequest.setStatus(RequestStatus.CANCELED);
+                }
+
+            bloodRequestRepository.saveAll(otherRequests);
+            return response;
+        }  else {
+            request.setAlert(alertService.createSendAlert(request));
+            request.setStatus(RequestStatus.PROCESSING);
+            response = bloodRequestRepository.save(request);
         }
-        Doctor doctor = doctorRepository.findDoctorByEmail(username).orElseThrow(() -> new RuntimeException("No doctor found"));
 
-        Set <BloodRequest> bloodRequests1 = request.getBankNames().stream().map(name -> {
-                    BloodBank bloodBank = bloodBankRepository.findByBloodBankName(name).orElseThrow(() -> new RuntimeException("Blood bank not found " + name));
-                    return
-                            BloodRequest.builder()
-                                    .bloodBank(bloodBank)
-                                    .quantityNeeded(request.getQuantityNeeded())
-                                    .recipientType(request.getRecipientType())
-                                    .doctor(doctor)
-                                    .status(RequestStatus.PENDING)
-                                    .build();
-                })
-                .collect(Collectors.toSet());
+        return response;
+    }
 
-        return (Set<BloodRequest>) bloodRequestRepository.saveAllAndFlush(bloodRequests1);
-    }*/
 
+// This method is used to verify if each attribute iof the BloodDemandRequest aren't blank
     private boolean verifyCreate(BloodDemandRequest request){
         return request.getStatus() == null ||
                 request.getBankNames().isEmpty() ||

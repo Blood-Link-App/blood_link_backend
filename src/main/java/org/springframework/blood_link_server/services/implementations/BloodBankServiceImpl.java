@@ -14,7 +14,6 @@ import java.util.List;
 @Service
 @Transactional
 @RequiredArgsConstructor
-
 public class BloodBankServiceImpl implements BloodBankService {
     private final BloodBankRepository bloodBankRepository;
     private final BankStockRepository bankStockRepository;

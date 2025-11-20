@@ -1,11 +1,18 @@
 package org.springframework.blood_link_server.models.medicalProfile;
 
 import jakarta.persistence.*;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+
+@Builder
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 
 @Entity
 @Table(name = "medical_profile")
@@ -15,13 +22,13 @@ public class MedicalProfile {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.PERSIST)
     private PersonalInfos personalInfos;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.PERSIST)
     private VitalSigns vitalSigns;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.PERSIST)
     private HealthQuestions healthQuestions;
 
     @CreationTimestamp
@@ -30,5 +37,5 @@ public class MedicalProfile {
 
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updateddAt;
+    private LocalDateTime updatedAt;
 }

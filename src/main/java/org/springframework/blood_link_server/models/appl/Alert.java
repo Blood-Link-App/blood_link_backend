@@ -1,14 +1,15 @@
 package org.springframework.blood_link_server.models.appl;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.blood_link_server.models.enumerations.AlertStatus;
 import org.springframework.blood_link_server.models.enumerations.BloodType;
-import org.springframework.blood_link_server.models.metiers.BloodBank;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -38,21 +39,23 @@ public class Alert {
     @Column(name = "status", nullable = false)
     private AlertStatus status;
 
-    @OneToOne
-    private BloodBank bloodBank;
 
-    private Integer quantity;
+    @Column(name = "quantity", nullable = false)
+    private Long quantity;
 
+    @Enumerated(EnumType.STRING)
     private List<BloodType> compatibleTypes ;
 
     @OneToMany(cascade = CascadeType.ALL)
-    private List<Notification> notifications;
+    private List<Notification> notifications = new ArrayList<>();
 
-
-/*
+    @JsonIgnore
     @OneToOne(cascade = CascadeType.ALL)
     private BloodRequest bloodRequest;
 
+
+
+/*
 
     @Column(name = "message", nullable = false)
     private String message;

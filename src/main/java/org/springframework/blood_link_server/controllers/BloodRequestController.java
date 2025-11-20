@@ -5,16 +5,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.blood_link_server.models.appl.BloodRequest;
 import org.springframework.blood_link_server.models.dtos.requests.BloodDemandRequest;
 import org.springframework.blood_link_server.models.dtos.responses.ErrorResponse;
+import org.springframework.blood_link_server.models.enumerations.RequestStatus;
 import org.springframework.blood_link_server.services.interfaces.BloodRequestService;
 import org.springframework.blood_link_server.services.interfaces.JwtService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("api/blood-request")
@@ -49,40 +49,42 @@ public class BloodRequestController {
                     .body(new ErrorResponse(e.getMessage()));
 
 
-        } /*catch (Exception e){
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(e);
-        }*/
+        }
     }
 
-/*    @PostMapping("create1")
-    public ResponseEntity<?> createRequest1(HttpServletRequest httpRequest, @RequestBody BloodDemandRequest request) {
-
+    //@PreAuthorize("hasRole(T(org.springframework.blood_link_server.models.enumerations.UserRole).BLOODBANK.name())")
+    @GetMapping("get-pending-bloodRequests-by-bloodbank/id={bankId}/status={status}")
+    public ResponseEntity<?> getPendingBloodRequest(@PathVariable UUID bankId, @PathVariable RequestStatus status) {
         try{
+            List<BloodRequest> bloodRequests = requestService.getPendingBloodRequestsByIdAndStatus(bankId, status);
 
-            final String authHeader = httpRequest.getHeader("Authorization");
-            var jwt = authHeader.substring(7);
-            var username = jwtService.extractUsername(jwt);
-
-            Set<BloodRequest> bloodRequests = requestService.sendRequests1(username, request); *//*Collections.singletonList((BloodRequest) )*//*
-
-            if (bloodRequests == null || bloodRequests.isEmpty()) {
-
+            if(bloodRequests == null){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(new ErrorResponse("No blood requests were created"));
-
+                        .body(new ErrorResponse("No blood requests with that status found "));
             }
-
             return ResponseEntity.ok(bloodRequests);
-
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
+        } catch (IllegalArgumentException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ErrorResponse(e.getMessage()));
-
-
         }
-    }*/
+    }
+
+    @PostMapping("process-request/{requestId}")
+    public ResponseEntity<?> processingRequest(HttpServletRequest httpServlet, @PathVariable UUID requestId) {
+        try {
+            String username = getUsername(httpServlet);
+            return ResponseEntity.ok(requestService.processingBloodRequest(username, requestId));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
+    private String getUsername(HttpServletRequest http) {
+        final String authHeader = http.getHeader("Authorization");
+        var jwt = authHeader.substring(7);
+        return jwtService.extractUsername(jwt);
+    }
+
 
 }

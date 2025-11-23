@@ -11,7 +11,7 @@ RUN chmod +x mvnw
 COPY . .
 
 # Build without tests
-RUN ./mvnw -B -DskipTests clean package
+RUN ./mvnw clean package # RUN ./mvnw -B -DskipTests clean package
 
 
 # ------------ 2. RUNTIME STAGE ------------

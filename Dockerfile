@@ -3,9 +3,9 @@ FROM eclipse-temurin:17-jdk AS build
 WORKDIR /app
 
 # Copy Maven wrapper and give permissions
-COPY mvnw .
-COPY .mvn .mvn
-RUN chmod +x mvnw
+#COPY mvnw .
+#COPY .mvn .mvn
+RUN #chmod +x mvnw
 
 # Copy the entire project
 COPY . .

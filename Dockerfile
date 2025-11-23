@@ -5,10 +5,11 @@ WORKDIR /app
 # Copy Maven wrapper and give permissions
 COPY mvnw .
 COPY .mvn .mvn
-RUN chmod +x ./mvnw
 
 # Copy the entire project
 COPY . .
+
+RUN chmod +x ./mvnw
 
 # Build without tests
 #RUN ./mvnw clean package

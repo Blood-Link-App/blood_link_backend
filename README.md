@@ -1,2 +1,2 @@
 # blood_link_backend
-Here, you will find the necessary APIs of our app
+Here, you will find necessary APIs of our app

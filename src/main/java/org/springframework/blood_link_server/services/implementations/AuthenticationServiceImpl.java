@@ -1,23 +1,33 @@
 package org.springframework.blood_link_server.services.implementations;
 
+import org.springframework.blood_link_server.models.appl.BloodBankStock;
+import org.springframework.blood_link_server.models.appl.StockByType;
 import org.springframework.blood_link_server.models.dtos.requests.LoginRequest;
 import org.springframework.blood_link_server.models.dtos.requests.RegisterRequest;
 import org.springframework.blood_link_server.models.dtos.responses.AuthenticationResponse;
+import org.springframework.blood_link_server.models.enumerations.BloodType;
 import org.springframework.blood_link_server.models.enumerations.UserRole;
 import org.springframework.blood_link_server.models.metiers.BloodBank;
 import org.springframework.blood_link_server.models.metiers.Doctor;
 import org.springframework.blood_link_server.models.metiers.Donor;
 import org.springframework.blood_link_server.models.metiers.User;
+import org.springframework.blood_link_server.repositories.BankStockRepository;
 import org.springframework.blood_link_server.repositories.BloodBankRepository;
+import org.springframework.blood_link_server.repositories.StockByTypeRepository;
 import org.springframework.blood_link_server.repositories.UserRepository;
 import org.springframework.blood_link_server.services.interfaces.AuthenticationService;
+import org.springframework.blood_link_server.services.interfaces.BloodBankService;
 import org.springframework.blood_link_server.services.interfaces.JwtService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
@@ -27,13 +37,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final BloodBankRepository bloodBankRepository;
     private final JwtService jwtService;
     private final AuthenticationManager authManager;
+    private final BloodBankService  bloodBankService;
+    private final BankStockRepository  bankStockRepository;
+    private final StockByTypeRepository typeRepository;
 
-    public AuthenticationServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, BloodBankRepository bloodBankRepository, JwtService jwtService, AuthenticationManager authManager){
+    public AuthenticationServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, BloodBankRepository bloodBankRepository, JwtService jwtService, AuthenticationManager authManager, BloodBankService bloodBankService, BankStockRepository bankStockRepository, StockByTypeRepository typeRepository){
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.bloodBankRepository = bloodBankRepository;
         this.jwtService = jwtService;
         this.authManager = authManager;
+        this.bloodBankService = bloodBankService;
+        this.bankStockRepository = bankStockRepository;
+        this.typeRepository = typeRepository;
     }
 
     @Override
@@ -47,7 +63,24 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         setCommonProperties(user, request);
 
-        userRepository.save(user);
+       var user2=  userRepository.saveAndFlush(user);
+
+       if(user2.getUserRole() == UserRole.BLOODBANK){
+           bloodBankService.initializeBloodBankStocks();
+
+           BloodBankStock bankStock = bloodBankService.getBloodBankStockByUsername(user2.getUsername());
+
+           Set<StockByType> types = Arrays.stream(BloodType.values()).map(
+                   type -> StockByType.builder()
+                           .bloodType(type)
+                           .quantity(0L).build()
+           ).collect(Collectors.toSet());
+
+          Set<StockByType> stockByTypes = new HashSet<>(typeRepository.saveAllAndFlush(types));
+           bankStock.setStockByTypeList(stockByTypes);
+
+           bankStockRepository.save(bankStock);
+       }
 
         String jwtToken = jwtService.generateToken(user.getEmail());
 

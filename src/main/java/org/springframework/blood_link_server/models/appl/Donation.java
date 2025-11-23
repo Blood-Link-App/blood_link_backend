@@ -13,6 +13,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 
 @Entity
 @Table(name = "donation")
@@ -26,7 +27,7 @@ public class Donation {
     private BloodType bloodType;
 
     @Column(name = "units_gave", nullable = false)
-    private int unitsGave;
+    private long unitsGave;
 
     @Column(name = "donation_status")
     @Enumerated(EnumType.STRING)

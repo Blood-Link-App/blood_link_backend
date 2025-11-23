@@ -23,6 +23,12 @@ public class BloodRequestCreatedEventListener {
                     "/queue/notifications", request
             );
 
+        if (request.getDoctor() != null)
+            messagingTemplate.convertAndSendToUser(
+                    request.getDoctor().getUsername(),
+                    "/queue/notifications", request
+            );
+
     }
 
 }

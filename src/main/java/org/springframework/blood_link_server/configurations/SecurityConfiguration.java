@@ -36,6 +36,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/v1/auth/signUp").permitAll()
                         .requestMatchers("/api/v1/auth/logIn").permitAll()
                         .requestMatchers("/ws/**").permitAll()
+                                .requestMatchers("/api/v1/user/**").hasAnyRole(DOCTOR.name(), BLOODBANK.name(), DONOR.name())
 
 /*=============================================================================Specific questions to donors============================================================================*/
 
@@ -44,6 +45,8 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/v1/medical-profile/create-profile").hasRole(DONOR.name())
                         .requestMatchers("/api/v1/medical-profile/get-profile").hasRole(DONOR.name())
                         .requestMatchers("/api/v1/medical-profile/update-profile").hasRole(DONOR.name())
+                                .requestMatchers("/api/v1/donor-response/create-donor-response").hasRole(DONOR.name())
+                                .requestMatchers("/api/v1/donation-request/create-donation-request").hasRole(DONOR.name())
 
 
 /*=============================================================================Specific questions to doctors============================================================================*/
@@ -62,6 +65,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/v1/bank-stock/update-total-quantity").hasRole(BLOODBANK.name())
                         .requestMatchers("/api/v1/bank-stock/increase/").hasRole(BLOODBANK.name())
                         .requestMatchers("/api/v1/alert/create-alert/**").hasRole(BLOODBANK.name())
+                                .requestMatchers("/api/v1/donation-request/process-donation-request").hasRole(BLOODBANK.name())
 
                         .anyRequest().authenticated()
                 )

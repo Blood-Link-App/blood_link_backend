@@ -18,8 +18,16 @@ public class NotificationEventListener {
     public void onNotificationCreated(NotificationCreatedEvent event) {
         Notification notification = event.getNotification();
         if (notification.getDonor() != null) {
-            messagingTemplate.convertAndSendToUser(notification.getDonor().getUsername(), "/queue/notifications", notification);
+            messagingTemplate.convertAndSendToUser(
+                    notification.getDonor().getUsername(),
+                    "/queue/notifications",
+                    notification
+            );
+            messagingTemplate.convertAndSendToUser(
+                    notification.getAlert().getBloodRequest().getBloodBank().getUsername(),
+                    "/queue/notifications",
+                    notification
+            );
         }
-
     }
 }

@@ -30,7 +30,7 @@ public class BloodBankStock {
     private long totalQuantity;
 
 
-    @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.DETACH)
     @JoinColumn(name= "stock_type_id")
     private Set<StockByType> stockByTypeList = new HashSet<>();
 
@@ -47,12 +47,9 @@ public class BloodBankStock {
     }
 
     @PrePersist
+    @PreUpdate
     public void updateTotalQuantity () {
-
-//        totalQuantity = 0;
         totalQuantity = getStockByTypeList().stream().mapToLong(StockByType::getQuantity).sum();
-//        for (StockByType type : stockByTypeList) {
-//            totalQuantity += type.getQuantity();
-//        }
     }
+
 }

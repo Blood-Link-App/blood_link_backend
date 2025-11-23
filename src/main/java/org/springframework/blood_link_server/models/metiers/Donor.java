@@ -55,4 +55,8 @@ public class Donor extends Person{
     public void removeAffiliateBank(BloodBank bloodBank) {
         this.affiliatedDonorBanks.remove(bloodBank);
     }
+
+    public boolean isAffiliated(BloodBank bank){
+        return affiliatedDonorBanks.contains(bank);
+    }
 }

@@ -35,9 +35,6 @@ public class BloodBank extends User{
     @OneToOne(cascade = CascadeType.PERSIST, orphanRemoval = true)
     @JoinColumn(name = "blood_bank_stock_id")
     private BloodBankStock stock;
-//
-//    @ManyToMany(mappedBy = "affiliatedDoctorBanks")
-//    private Set<Doctor> affiliatedDoctors = new HashSet<>();
 
     @ManyToMany(mappedBy = "affiliatedDonorBanks")
     private Set <Donor> affiliatedDonors = new HashSet<>();

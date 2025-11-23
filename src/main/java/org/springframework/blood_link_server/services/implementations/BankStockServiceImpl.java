@@ -1,10 +1,12 @@
 package org.springframework.blood_link_server.services.implementations;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.security.auth.message.AuthException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.blood_link_server.models.appl.BloodBankStock;
 import org.springframework.blood_link_server.models.appl.StockByType;
 import org.springframework.blood_link_server.models.dtos.requests.StockByTypeRequest;
+import org.springframework.blood_link_server.models.enumerations.BloodType;
 import org.springframework.blood_link_server.models.metiers.BloodBank;
 import org.springframework.blood_link_server.repositories.BankStockRepository;
 import org.springframework.blood_link_server.repositories.BloodBankRepository;
@@ -50,6 +52,10 @@ public class BankStockServiceImpl implements BankStockService {
         return bankRepository.save(bank).getStock();
     }
 
+
+
+
+
     /**
      * @param username of the connected blood bank
      * @param quantity to increase the quantity of  current stock
@@ -68,8 +74,15 @@ public class BankStockServiceImpl implements BankStockService {
         StockByType stock = typeRepository.findById(stockId).orElseThrow(() -> new UsernameNotFoundException("Not found"));
         stock.upgradeQuantity(quantity);
 
-        return typeRepository.save(stock);
+        StockByType saved = typeRepository.saveAndFlush(stock);
+
+        updateTotalQuantity(username);
+        return saved;
     }
+
+
+
+
 
     /**
      * @param username of the connected blood bank
@@ -97,6 +110,10 @@ public class BankStockServiceImpl implements BankStockService {
     /**
      * @return the new quantity in stock
      */
+
+
+
+
     @Override
     public long updateTotalQuantity(String username) {
         BloodBank bank  = bankRepository.findByEmail(username).orElseThrow(() ->new UsernameNotFoundException("User not found"));
@@ -106,7 +123,26 @@ public class BankStockServiceImpl implements BankStockService {
         return stock.getTotalQuantity();
     }
 
+    /**
+     * @param stockId id of the bank stock
+     * @param bloodType of the stock by type
+     * @return a stock by type
+     */
 
+    @Override
+    public StockByType getStockBYtype(UUID stockId, BloodType bloodType) {
+
+        BloodBankStock bankStock = bankStockRepository.findById(stockId).orElse(null);
+
+        if (bankStock == null){
+            throw new EntityNotFoundException("Bank not found");
+        }
+        return bankStock.getStockByTypeList()
+                .stream()
+                .filter(s -> s.getBloodType() == bloodType)
+                .findFirst()
+                .orElseThrow(()-> new RuntimeException("No stock found for blood type " + bloodType));
+    }
 
 
 }

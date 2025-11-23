@@ -37,6 +37,9 @@ public class DonorServiceImpl implements DonorService {
                 .orElseThrow(() -> new UsernameNotFoundException("Blood bank not found"));
 
         donor.affiliateNewBank(bloodBank);
+        bloodBank.getAffiliatedDonors().add(donor);
+
+        bloodBankRepository.save(bloodBank);
 
         donorRepository.save(donor);
 
@@ -57,6 +60,7 @@ public class DonorServiceImpl implements DonorService {
      */
     @Override
     public void removeDonorAffiliationToBloodBank(UUID bankId) {
+
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
@@ -67,26 +71,36 @@ public class DonorServiceImpl implements DonorService {
         BloodBank bloodBank = bloodBankRepository.findBloodBanksById(bankId)
                 .orElseThrow(() -> new RuntimeException("Blood bank not found"));
 
-
+        bloodBank.getAffiliatedDonors().remove(donor);
         donor.removeAffiliateBank(bloodBank);
+
+        bloodBankRepository.save(bloodBank);
 
         donorRepository.save(donor);
 
-    }
 
-     /**
-     * @param name is the name of the bank the donor should affiliate to
+        donorRepository.save(donor);
+        }
+
+
+
+    /**
+     * @param name of the blood bank
      */
-     @Override
-     public void affiliateDonorToBloodBank(String name) {
+    @Override
+    public void affiliateDonorToBloodBank(String name) {
 
     }
 
     /**
-     * @param name is the name of the bank the donor should break affiliation with
+     * @param name of the blood bank
      */
     @Override
     public void removeDonorAffiliationToBloodBank(String name) {
 
     }
+
+
 }
+
+

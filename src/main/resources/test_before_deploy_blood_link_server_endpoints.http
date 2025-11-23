@@ -1,0 +1,394 @@
+### ========================================================================= I. Register users =========================================================================
+
+
+### 1. Register donors
+
+### donor Betine Audrey
+POST http://localhost:8080/api/v1/auth/signUp
+Content-Type: application/json
+
+{
+  "name": "Betine",
+  "surname": "Audrey",
+  "email": "audreybetine@gmail.com",
+  "password": "1234567890",
+  "phoneNumber": "650428604",
+  "userRole": "DONOR",
+  "LastDonationDate": "2024-11-10",
+  "bloodType": "O_POSITIVE"
+}
+
+
+### donor Seppo mammy
+POST http://localhost:8080/api/v1/auth/signUp
+Content-Type: application/json
+
+
+{
+"name": "SEPPO",
+"surname": "MAMMY",
+"email": "mammyseppo@gmail.com",
+"password": "2345678901",
+"phoneNumber": "654321098",
+"userRole": "DONOR",
+"LastDonationDate": "2022-10-11",
+"bloodType": "O_NEGATIVE"
+}
+
+
+###donor Pugueu Albane
+POST http://localhost:8080/api/v1/auth/signUp
+Content-Type: application/json
+
+{
+  "name": "Pugueu",
+  "surname": "Albane",
+  "email": "albanebetine@gmail.com",
+  "password": "0123456789",
+  "phoneNumber": "695497867",
+  "userRole": "DONOR",
+  "LastDonationDate": "2023-11-10",
+  "bloodType": "A_POSITIVE"
+}
+
+### 2. Register doctors
+
+### Doctor Deudjie Axelle
+POST http://localhost:8080/api/v1/auth/signUp
+Content-Type: application/json
+
+{
+  "name": "Deudjie",
+  "surname": "Axelle",
+  "email": "axelleDeudjie@gmail.com",
+  "password": "AxelleDeudjie567",
+  "phoneNumber": "612345678",
+  "userRole": "DOCTOR",
+  "speciality": "Hematology",
+  "hospitalName": "CHU-YAOUNDE"
+}
+
+### Doctor Mintchounla David
+POST http://localhost:8080/api/v1/auth/signUp
+Content-Type: application/json
+
+{
+  "name": "Doc. Mintchounla",
+  "surname": "David",
+  "email": "mintchounlaYde@gmail.com",
+  "password": "Mintchounla657",
+  "phoneNumber": "689012345",
+  "userRole": "DOCTOR",
+  "speciality": "ORL",
+  "hospitalName": "HOPITAL MILITAIRE DE YDE"
+}
+
+
+### Doctor Mbadi Sabine
+POST http://localhost:8080/api/v1/auth/signUp
+Content-Type: application/json
+
+{
+  "name": "Mbadi",
+  "surname": "Sabine",
+  "email": "sabinembadi@gmail.com",
+  "password": "MbadiSabine657",
+  "phoneNumber": "689012345",
+  "userRole": "DOCTOR",
+  "speciality": "Neuro-chirugien",
+  "hospitalName": "HOPITAL DES NEUROCHIRUGIENS"
+}
+
+
+
+
+### 3. Register Blood Banks
+
+
+### Central Blood Bank
+POST http://localhost:8080/api/v1/auth/signUp
+Content-Type: application/json
+
+{
+  "email": "centralbloodbank@gmail.com",
+  "password": "Central12345",
+  "phoneNumber": "678912345",
+  "userRole": "BLOODBANK",
+  "bloodBankName": "Central Blood Bank",
+  "address": "Central Rue 123"
+}
+
+
+### Garnison Blood Bank
+POST http://localhost:8080/api/v1/auth/signUp
+Content-Type: application/json
+
+{
+  "email": "garnisonbloodbank@gmail.com",
+  "password": "Garnison67890",
+  "phoneNumber": "656789012",
+  "userRole": "BLOODBANK",
+  "bloodBankName": "Garnison Blood Bank",
+  "address": "Garnison Rue 0123"
+}
+
+### General Blood Bank
+POST http://localhost:8080/api/v1/auth/signUp
+Content-Type: application/json
+
+{
+  "email": "generalbloodbank@gmail.com",
+  "password": "General123456",
+  "phoneNumber": "678912305",
+  "userRole": "BLOODBANK",
+  "bloodBankName": "General Blood Bank",
+  "address": "General Rue 0432"
+}
+
+### Defense Blood Bank
+POST http://localhost:8080/api/v1/auth/signUp
+Content-Type: application/json
+
+{
+  "email": "defensebloodbank@gmail.com",
+  "password": "Defense12345",
+  "phoneNumber": "623456789",
+  "userRole": "BLOODBANK",
+  "bloodBankName": "Defense Blood Bank",
+  "address": "Defense Rue 04678"
+}
+
+
+###Kalash Blood Bank
+POST http://localhost:8080/api/v1/auth/signUp
+Content-Type: application/json
+
+{
+  "email": "kalashbloodbank@gmail.com",
+  "password": "Kalash12345",
+  "phoneNumber": "676543210",
+  "userRole": "BLOODBANK",
+  "bloodBankName": "KALASH Blood Bank",
+  "address": "KALASH BP-456"
+}
+
+
+###=============================================================================== I. Login Users ===============================================================================
+
+### 1. Login donors
+
+### Login Betine Audrey
+POST http://localhost:8080/api/v1/auth/logIn
+Content-Type: application/json
+
+{
+  "email": "audreybetine@gmail.com",
+  "password": "1234567890"
+}
+
+### Login Seppo Mammy
+POST http://192.168.1.100:8080/api/v1/auth/logIn
+Content-Type: application/json
+
+{
+  "email": "mammyseppo@gmail.com",
+  "password": "2345678901"
+}
+
+### Login Pugueu Albane
+POST http://localhost:8080/api/v1/auth/logIn
+Content-Type: application/json
+
+{
+  "email": "albanebetine@gmail.com",
+  "password": "0123456789"
+}
+
+
+### Login Deudjie Axelle
+POST http://localhost:8080/api/v1/auth/logIn
+Content-Type: application/json
+
+{
+  "email": "axelleDeudjie@gmail.com",
+  "password": "AxelleDeudjie567"
+}
+
+
+### Login Mintchounla David
+POST http://localhost:8080/api/v1/auth/logIn
+Content-Type: application/json
+
+{
+  "email": "mintchounlaYde@gmail.com",
+  "password": "Mintchounla657"
+}
+
+
+### Login Mbadi Sabine
+POST http://localhost:8080/api/v1/auth/logIn
+Content-Type: application/json
+
+{
+  "email": "sabinembadi@gmail.com",
+  "password": "MbadiSabine657"
+}
+
+
+### Login Central Blood Bank
+POST http://localhost:8080/api/v1/auth/logIn
+Content-Type: application/json
+
+{
+  "email": "centralbloodbank@gmail.com",
+  "password": "Central12345"
+}
+
+
+### Login Garnison Blood Bank
+POST http://localhost:8080/api/v1/auth/logIn
+Content-Type: application/json
+
+{
+  "email": "garnisonbloodbank@gmail.com",
+  "password": "Garnison67890"
+}
+
+### Login General Blood Bank
+POST http://localhost:8080/api/v1/auth/logIn
+Content-Type: application/json
+
+{
+  "email": "generalbloodbank@gmail.com",
+  "password": "General123456"
+}
+
+### Login Defense Blood Bank
+POST http://localhost:8080/api/v1/auth/logIn
+Content-Type: application/json
+
+{
+  "email": "defensebloodbank@gmail.com",
+  "password": "Defense12345"
+}
+
+
+
+### Login Kalash Blood Bank
+POST http://localhost:8080/api/v1/auth/logIn
+Content-Type: application/json
+
+{
+  "email": "kalashbloodbank@gmail.com",
+  "password": "Kalash12345"
+}
+
+
+### ===================================================================== III. Donors Affilate to blood banks =====================================================================
+
+### 1. Betine Audrey affiliate to all existing blood banks
+
+### We need donor's token (Betine Audrey) and blood bank Id (Central)
+POST http://localhost:8080/api/v1/donor/affiliation-donor-blood-bank/{{bankId}}
+
+### We need donor's token (Betine Audrey) and blood bank Id (Garnison)
+POST http://localhost:8080/api/v1/donor/affiliation-donor-blood-bank/{{bankId}}
+
+### We need donor's token (Betine Audrey) and blood bank Id (Kalash)
+POST http://localhost:8080/api/v1/donor/affiliation-donor-blood-bank/{{bankId}}
+
+### We need donor's token (Betine Audrey) and blood bank Id (Defense)
+POST http://localhost:8080/api/v1/donor/affiliation-donor-blood-bank/{{bankId}}
+
+### We need donor's token (Betine Audrey) and blood bank Id (General)
+POST http://localhost:8080/api/v1/donor/affiliation-donor-blood-bank/{{bankId}}
+
+###-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+### 2. Seppo Mammy affiliate to "Defense Blood Bank", "Garnison Blood Bank", "Kalash Blood Bank", "General Blood Bank
+
+### We need donor's token (Seppo Mammy) and blood bank Id (Garnison)
+POST http://localhost:8080/api/v1/donor/affiliation-donor-blood-bank/{{bankId}}
+
+### We need donor's token (Seppo Mammy) and blood bank Id (Kalash)
+POST http://localhost:8080/api/v1/donor/affiliation-donor-blood-bank/{{bankId}}
+
+### We need donor's token (Seppo Mammy) and blood bank Id (Defense)
+POST http://localhost:8080/api/v1/donor/affiliation-donor-blood-bank/{{bankId}}
+
+### We need donor's token (Seppo Mammy) and blood bank Id (General)
+POST http://localhost:8080/api/v1/donor/affiliation-donor-blood-bank/{{bankId}}
+
+
+###-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+### 3. Pugueu Albane affiliate to "Garnison Blood Bank", "Kalash Blood Bank", "General Blood Bank
+
+### We need donor's token (Pugueu Albane) and blood bank Id (Garnison)
+POST http://localhost:8080/api/v1/donor/affiliation-donor-blood-bank/{{bankId}}
+
+### We need donor's token (Pugueu Albane) and blood bank Id (Kalash)
+POST http://localhost:8080/api/v1/donor/affiliation-donor-blood-bank/{{bankId}}
+
+### We need donor's token (Seppo Mammy) and blood bank Id (General)
+POST http://localhost:8080/api/v1/donor/affiliation-donor-blood-bank/{{bankId}}
+
+
+
+### ============================================================================= IV. Blood Requests ==============================================================================
+
+### We need doctor's token (Doctor Deudjie Axelle)
+POST http://localhost:8080/api/blood-request/create
+Authorization: Bearer {{}}
+Content-Type: application/json
+
+{
+  "recipientType": "A_POSITIVE",
+  "quantityNeeded": 5,
+  "status": "PENDING",
+  "bankNames": ["Central Blood Bank", "Defense Blood Bank", "Garnison Blood Bank", "Kalash Blood Bank", "General Blood Bank"]
+}
+
+### We need doctor's token (Doctor Mintchounla David)
+POST http://localhost:8080/api/blood-request/create
+Authorization: Bearer {{}}
+Content-Type: application/json
+
+{
+  "recipientType": "A_POSITIVE",
+  "quantityNeeded": 5,
+  "status": "PENDING",
+  "bankNames": ["Central Blood Bank","Kalash Blood Bank", "General Blood Bank"]
+}
+
+
+### We need doctor's token (Doctor Mdadi Sabine)
+POST http://192.168.1.100:8080/api/blood-request/create
+Authorization: Bearer {{}}
+Content-Type: application/json
+
+{
+  "recipientType": "A_POSITIVE",
+  "quantityNeeded": 5,
+  "status": "PENDING",
+  "bankNames": ["Defense Blood Bank", "Garnison Blood Bank"]
+}
+
+
+### ======================================================================== V. Blood Bank creates Alert =========================================================================
+
+
+### 1. General creates an independent alert (we need a token)
+###
+POST http://localhost:8080/api/v1/alert/create-alert/{{recipientType}}
+
+
+### 2. Kalash creates an independent alert (we need a token)
+###
+POST http://localhost:8080/api/v1/alert/create-alert/{{recipientType}}
+
+### ============================================================================ VI. Donor Response =============================================================================
+
+
+### =========================================================================== VII. Donation Request ============================================================================

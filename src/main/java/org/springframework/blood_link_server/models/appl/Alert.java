@@ -53,12 +53,4 @@ public class Alert {
     @OneToOne(cascade = CascadeType.ALL)
     private BloodRequest bloodRequest;
 
-
-
-/*
-
-    @Column(name = "message", nullable = false)
-    private String message;
-*/
-
 }

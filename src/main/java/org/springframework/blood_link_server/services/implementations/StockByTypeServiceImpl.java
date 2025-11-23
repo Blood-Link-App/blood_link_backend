@@ -16,7 +16,6 @@ import java.util.List;
 public class StockByTypeServiceImpl implements StockByTypeService {
 
     private final StockByTypeRepository typeRepository;
-    //private  BloodType bloodType;
 
     /**
      * @param request is the parameter sent to check if there's enough blood in the stock

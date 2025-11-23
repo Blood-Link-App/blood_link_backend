@@ -1,0 +1,62 @@
+###====================================================== New Process Starting from creating blood to donor response ======================================================
+
+### 1. Create BloodRequests and send it two defense blood bank
+
+### --- Login a doctor :
+POST http://localhost:8080/api/v1/auth/logIn
+Content-Type: application/json
+
+{
+  "email": "mintchounlaYde@gmail.com",
+  "password": "Mintchounla657"
+}
+
+
+
+### --- Login General Blood Blank
+POST http://localhost:8080/api/v1/auth/logIn
+Content-Type: application/json
+
+{
+  "email": "centralbloodbank1@gmail.com",
+  "password": "Central123456"
+}
+
+### --- Login Defense Blood Blank
+POST http://localhost:8080/api/v1/auth/logIn
+Content-Type: application/json
+
+{
+  "email": "defensebloodbank@gmail.com",
+  "password": "Defense12345"
+}
+
+
+### --- Doctor Mintchounla creates blood requests for defense and general blood banks
+###
+POST http://localhost:8080/api/blood-request/create
+Authorization: Bearer {{tokenDoctor}}
+Content-Type: application/json
+
+{
+  "recipientType": "A_POSITIVE",
+  "quantityNeeded": 5,
+  "status": "PENDING",
+  "bankNames": ["Defense Blood Bank", "General Blood Bank"]
+}
+
+### 2. Blood banks process blood request received
+### Process By Defense Blood bank
+
+
+### Process By Defense Blood bank
+###
+POST http://localhost:8080/api/blood-request/process-request/{{requestId}}
+Authorization: Bearer {{tokenDefenseBloodBank}}
+
+
+### Process By General Blood bank
+###
+POST http://localhost:8080/api/blood-request/process-request/{{requestId1}}
+Authorization: Bearer {{tokenGeneralBloodBank}}
+

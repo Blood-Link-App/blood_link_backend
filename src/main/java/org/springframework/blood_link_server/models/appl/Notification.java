@@ -1,10 +1,8 @@
 package org.springframework.blood_link_server.models.appl;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.blood_link_server.events.NotificationCreatedEvent;
 import org.springframework.blood_link_server.models.enumerations.AlertStatus;
@@ -20,7 +18,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-
+@Builder
 @Entity
 @Table(name = "notification")
 
@@ -36,13 +34,15 @@ public class Notification {
     @Column(name = "created_at", updatable = false, nullable = false)
     private LocalDateTime createdAt;
 
+    @JsonIgnore
     @ManyToOne
     private Alert alert;
 
     @ManyToOne
+    @JsonIgnore
     private Donor donor;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "donor_response_id")
     private DonorResponse donorResponse;
 

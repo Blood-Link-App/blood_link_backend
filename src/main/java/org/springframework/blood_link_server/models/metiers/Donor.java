@@ -1,5 +1,6 @@
 package org.springframework.blood_link_server.models.metiers;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,9 +34,11 @@ public class Donor extends Person{
     @Column(name = "last_donation_date")
     private LocalDate lastDonationDate;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "donor", cascade = CascadeType.ALL)
     private List<Notification> notifications ;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "donor", cascade = CascadeType.ALL)
     private List<DonationRequest> donationRequests;
 
@@ -43,6 +46,7 @@ public class Donor extends Person{
     @JoinColumn(name = "medical_profile_id")
     private MedicalProfile medicalProfile;
 
+    @JsonIgnore
     @ManyToMany(cascade = CascadeType.DETACH)
     @JoinTable(
              name = "donor_blood_affiliation", joinColumns = @JoinColumn(name = "donor_id"), inverseJoinColumns = @JoinColumn(name ="bloodbank_id"))

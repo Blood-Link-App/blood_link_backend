@@ -12,4 +12,5 @@ public interface DonationRequestService {
     DonationRequest createDonationRequest(String username, UUID notifId, DonationDemandRequest demandRequest);
 
     Donation processDonationRequest(String username, UUID requestId);
+
 }

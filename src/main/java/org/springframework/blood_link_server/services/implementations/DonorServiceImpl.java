@@ -1,6 +1,7 @@
 package org.springframework.blood_link_server.services.implementations;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.blood_link_server.models.appl.DonationRequest;
 import org.springframework.blood_link_server.models.metiers.BloodBank;
 import org.springframework.blood_link_server.models.metiers.Donor;
 import org.springframework.blood_link_server.repositories.BloodBankRepository;
@@ -10,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -17,6 +19,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 
 public class DonorServiceImpl implements DonorService {
+
     private final DonorRepository donorRepository;
     private final BloodBankRepository bloodBankRepository;
 
@@ -43,6 +46,19 @@ public class DonorServiceImpl implements DonorService {
 
         donorRepository.save(donor);
 
+    }
+
+    /**
+     * @return donation requests
+     */
+
+    @Override
+    public List<DonationRequest> getDonationRequests(String username) {
+        Donor donor = donorRepository.findByEmail(username).orElse(null);
+        if (donor == null) {
+            throw new UsernameNotFoundException("there's no donor with that " + username + " email");
+        }
+        return donor.getDonationRequests();
     }
 
     /**

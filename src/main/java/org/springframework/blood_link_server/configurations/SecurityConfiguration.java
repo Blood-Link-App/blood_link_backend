@@ -47,6 +47,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/v1/medical-profile/update-profile").hasRole(DONOR.name())
                                 .requestMatchers("/api/v1/donor-response/create-donor-response").hasRole(DONOR.name())
                                 .requestMatchers("/api/v1/donation-request/create-donation-request").hasRole(DONOR.name())
+                                .requestMatchers("/api/v1/donor/get-donation-requests").hasRole(DONOR.name())
 
 
 /*=============================================================================Specific questions to doctors============================================================================*/

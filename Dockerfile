@@ -5,7 +5,7 @@ WORKDIR /app
 # Copy Maven wrapper and give permissions
 #COPY mvnw .
 #COPY .mvn .mvn
-RUN #chmod +x mvnw
+RUN #chmod +x ./mvnw
 
 # Copy the entire project
 COPY . .

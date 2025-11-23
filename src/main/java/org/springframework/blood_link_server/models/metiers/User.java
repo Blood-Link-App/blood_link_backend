@@ -21,7 +21,7 @@ import java.util.UUID;
 @SuperBuilder
 
 @Entity
-@Table(name = "user")
+@Table(name = "user_table")
 @Inheritance(strategy = InheritanceType.JOINED)
 
 public class User implements UserDetails {

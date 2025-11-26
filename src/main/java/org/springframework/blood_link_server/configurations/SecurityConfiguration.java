@@ -40,6 +40,7 @@ public class SecurityConfiguration {
 
                         .requestMatchers("/api/v1/auth/signUp").permitAll()
                         .requestMatchers("/api/v1/auth/logIn").permitAll()
+                        .requestMatchers("/api/v1/auth/current-user").hasAnyRole(DOCTOR.name(), BLOODBANK.name(), DONOR.name())
                         .requestMatchers("/ws/**").permitAll()
                                 .requestMatchers("/api/v1/user/**").hasAnyRole(DOCTOR.name(), BLOODBANK.name(), DONOR.name())
 

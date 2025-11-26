@@ -65,7 +65,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
        var user2=  userRepository.saveAndFlush(user);
 
-       if(user2.getUserRole() == UserRole.BLOODBANK){
+       if(user2.getUserRole() == UserRole.BLOODBANK || user2.getUserRole() == UserRole.BLOOD_BANK){
            bloodBankService.initializeBloodBankStocks();
 
            BloodBankStock bankStock = bloodBankService.getBloodBankStockByUsername(user2.getUsername());
@@ -124,7 +124,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 request.getPhoneNumber() != null &&
                 request.getUserRole() != null && (
                         (
-                         request.getUserRole() == UserRole.BLOODBANK &&
+                         (request.getUserRole() == UserRole.BLOODBANK || request.getUserRole() == UserRole.BLOOD_BANK) &&
                                  request.getBloodBankName() != null &&
                                  request.getAddress() != null
                 ) || (
@@ -150,7 +150,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if(userRepository.findByPhoneNumber(request.getPhoneNumber()).isPresent()){
             throw new IllegalArgumentException(("This phone number is already in use"));
         }
-        if(request.getUserRole() == UserRole.BLOODBANK && bloodBankRepository.findByBloodBankName(request.getBloodBankName()).isPresent()){
+        if((request.getUserRole() == UserRole.BLOODBANK || request.getUserRole() == UserRole.BLOOD_BANK) && bloodBankRepository.findByBloodBankName(request.getBloodBankName()).isPresent()){
             throw new IllegalArgumentException("There's already a bloodbank with the same name");
         }
     }
@@ -159,7 +159,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         return switch (request.getUserRole()){
 
-            case BLOODBANK -> {
+            case BLOODBANK, BLOOD_BANK -> {
                 BloodBank bloodBank = new BloodBank();
                 bloodBank.setAddress(request.getAddress());
                 bloodBank.setBloodBankName(request.getBloodBankName());
@@ -193,7 +193,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 donor.setBloodType(request.getBloodType());
                 donor.setName(request.getName());
                 donor.setSurname(request.getSurname());
-                donor.setLastDonationDate(request.getLastDonationDate());
+                // Parse date string to LocalDate
+                if (request.getLastDonationDate() != null && !request.getLastDonationDate().isEmpty()) {
+                    donor.setLastDonationDate(java.time.LocalDate.parse(request.getLastDonationDate()));
+                }
                 donor.setUserRole(UserRole.DONOR);
                 yield donor;
             }

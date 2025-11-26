@@ -1,18 +1,20 @@
 package org.springframework.blood_link_server.models.dtos.requests;
 
-import lombok.Builder;
-import lombok.Getter;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
 
 
 import org.springframework.blood_link_server.models.enumerations.BloodType;
 import org.springframework.blood_link_server.models.enumerations.UserRole;
 
-import java.time.LocalDate;
 import java.util.UUID;
 
 
 @Getter
+@Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 
 public class RegisterRequest {
 
@@ -25,7 +27,8 @@ public class RegisterRequest {
     private UserRole userRole;
 
     // Donor's information
-    private LocalDate LastDonationDate;
+    @JsonProperty("LastDonationDate")
+    private String lastDonationDate;
     private BloodType bloodType;
 
     //Doctor's information

@@ -18,8 +18,6 @@ import org.springframework.blood_link_server.repositories.UserRepository;
 import org.springframework.blood_link_server.services.interfaces.AuthenticationService;
 import org.springframework.blood_link_server.services.interfaces.BloodBankService;
 import org.springframework.blood_link_server.services.interfaces.JwtService;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -36,17 +34,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final BloodBankRepository bloodBankRepository;
     private final JwtService jwtService;
-    private final AuthenticationManager authManager;
     private final BloodBankService  bloodBankService;
     private final BankStockRepository  bankStockRepository;
     private final StockByTypeRepository typeRepository;
 
-    public AuthenticationServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, BloodBankRepository bloodBankRepository, JwtService jwtService, AuthenticationManager authManager, BloodBankService bloodBankService, BankStockRepository bankStockRepository, StockByTypeRepository typeRepository){
+    public AuthenticationServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, BloodBankRepository bloodBankRepository, JwtService jwtService, BloodBankService bloodBankService, BankStockRepository bankStockRepository, StockByTypeRepository typeRepository){
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.bloodBankRepository = bloodBankRepository;
         this.jwtService = jwtService;
-        this.authManager = authManager;
         this.bloodBankService = bloodBankService;
         this.bankStockRepository = bankStockRepository;
         this.typeRepository = typeRepository;
@@ -88,7 +84,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .email(user.getEmail())
-                .role(user.getUserRole().name())
+                .role(user.getUserRole().getValue())
                 .build();
         }
         throw new IllegalArgumentException("Missing required fields for role : " + request.getUserRole());
@@ -97,22 +93,28 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AuthenticationResponse login(LoginRequest request){
-        authManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword()
-                )
-        );
+        // MODE DÉVELOPPEMENT : Authentification simplifiée sans vérification du mot de passe
+        // authManager.authenticate(
+        //         new UsernamePasswordAuthenticationToken(
+        //                 request.getEmail(),
+        //                 request.getPassword()
+        //         )
+        // );
 
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Utilisateur non trouvé avec cet email"));
+
+        // En mode dev, on vérifie quand même le mot de passe manuellement
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("Mot de passe incorrect");
+        }
 
         String jwtToken = jwtService.generateToken(user.getEmail());
 
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .email(user.getEmail())
-                .role(user.getUserRole().name())
+                .role(user.getUserRole().getValue())
                 .build();
     }
 
@@ -137,8 +139,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                         request.getUserRole() == UserRole.DONOR &&
                                 request.getName() != null &&
                                 request.getSurname() != null &&
-                                request.getBloodType() != null &&
-                                request.getLastDonationDate() != null
+                                request.getBloodType() != null
+                                // lastDonationDate est optionnel
                 )
         );
     }

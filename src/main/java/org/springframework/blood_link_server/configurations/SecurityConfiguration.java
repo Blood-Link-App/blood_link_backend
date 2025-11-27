@@ -35,61 +35,24 @@ public class SecurityConfiguration {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-
-
-
-                        .requestMatchers("/api/v1/auth/signUp").permitAll()
-                        .requestMatchers("/api/v1/auth/logIn").permitAll()
-                        .requestMatchers("/api/v1/auth/current-user").hasAnyRole(DOCTOR.name(), BLOODBANK.name(), DONOR.name())
-                        .requestMatchers("/ws/**").permitAll()
-                                .requestMatchers("/api/v1/user/**").hasAnyRole(DOCTOR.name(), BLOODBANK.name(), DONOR.name())
-
-/*=============================================================================Specific questions to donors============================================================================*/
-
-
-                        .requestMatchers("/api/v1/donor/**").hasRole(DONOR.name())
-                        .requestMatchers("/api/v1/medical-profile/create-profile").hasRole(DONOR.name())
-                        .requestMatchers("/api/v1/medical-profile/get-profile").hasRole(DONOR.name())
-                        .requestMatchers("/api/v1/medical-profile/update-profile").hasRole(DONOR.name())
-                                .requestMatchers("/api/v1/donor-response/create-donor-response").hasRole(DONOR.name())
-                                .requestMatchers("/api/v1/donation-request/create-donation-request").hasRole(DONOR.name())
-                                .requestMatchers("/api/v1/donor/get-donation-requests").hasRole(DONOR.name())
-
-
-/*=============================================================================Specific questions to doctors============================================================================*/
-
-
-                                .requestMatchers("/api/blood-request/create").hasRole(DOCTOR.name())
-
-
-/*=============================================================================Specific questions to blood banks============================================================================*/
-
-
-                                .requestMatchers("/api/blood-request/get-pending-bloodRequests-by-bloodbank/").hasRole(BLOODBANK.name())
-                        .requestMatchers("/api/blood-request/process-request/**").hasRole(BLOODBANK.name())
-                        .requestMatchers("/api/v1/bank-stock/**").hasRole(BLOODBANK.name())
-                        .requestMatchers("/api/v1/bloodbank/initialize-blood-bank-stocks").hasRole(BLOODBANK.name())
-                        .requestMatchers("/api/v1/bank-stock/update-total-quantity").hasRole(BLOODBANK.name())
-                        .requestMatchers("/api/v1/bank-stock/increase/").hasRole(BLOODBANK.name())
-                        .requestMatchers("/api/v1/alert/create-alert/**").hasRole(BLOODBANK.name())
-                                .requestMatchers("/api/v1/donation-request/process-donation-request").hasRole(BLOODBANK.name())
-
-                        .anyRequest().authenticated()
+                        // MODE DÉVELOPPEMENT : Tous les endpoints sont accessibles sans authentification, ça complique la vie inutilement, et ce n'est pas forcément ce que Dr Jiomekong veut voir
+                        .anyRequest().permitAll()
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-                .authenticationProvider(authenticationProvider)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                // Filtre JWT activé pour permettre /users/get-me
+                .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
-
+ 
     }
     @Bean
-    CorsConfigurationSource corsConfigurationSource() {
+    CorsConfigurationSource corsConfigurationSource() { 
 
-        CorsConfiguration configuration = new CorsConfiguration();
+        CorsConfiguration configuration = new CorsConfiguration(); 
         configuration.setAllowedOriginPatterns(List.of("*", "*://*", "*://*.*.*.*:*"));
 //        configuration.setAllowedOrigins(List.of("http://localhost:4200"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));

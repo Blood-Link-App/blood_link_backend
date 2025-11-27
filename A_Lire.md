@@ -131,13 +131,21 @@ Authorization: Bearer {token}
 
 ## Notes importantes
 
-1. **Token JWT** : Après connexion ou inscription, vous recevez un token JWT à utiliser dans le header `Authorization: Bearer {token}` pour les requêtes authentifiées.
+1. **⚠️ MODE DÉVELOPPEMENT** : La sécurité est actuellement **DÉSACTIVÉE**. Tous les endpoints sont accessibles sans authentification. Aucun token JWT n'est requis pour les requêtes.
 
-2. **Format de date** : Les dates doivent être au format ISO 8601 : `YYYY-MM-DD`
+2. **Token JWT** : Après connexion ou inscription, vous recevez un token JWT, mais il n'est **PAS nécessaire** de l'utiliser pour le moment (sécurité désactivée).
 
-3. **Validation** :
+3. **Format de date** : Les dates doivent être au format ISO 8601 : `YYYY-MM-DD`
+
+4. **Validation** :
    - Email doit être unique
    - Numéro de téléphone doit être unique
    - Nom de banque de sang doit être unique (pour les Blood Banks)
 
-4. **CORS** : Le backend accepte les requêtes de toutes les origines
+5. **CORS** : Le backend accepte les requêtes de toutes les origines (configuré pour le développement).
+
+---
+
+## ⚠️ Important pour la production
+
+Avant de déployer en production, vous devrez réactiver la sécurité dans `SecurityConfiguration.java` en décommentant les lignes du filtre JWT et en configurant les autorisations appropriées.

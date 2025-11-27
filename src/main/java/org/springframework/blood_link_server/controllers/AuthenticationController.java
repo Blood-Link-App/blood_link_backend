@@ -40,28 +40,49 @@ public class AuthenticationController {
     @PostMapping("/signUp")
     public ResponseEntity<?> registerUser(@RequestBody RegisterRequest request){
         try {
-
+            System.out.println("=== SIGNUP REQUEST ===");
+            System.out.println("Email: " + request.getEmail());
+            System.out.println("Phone: " + request.getPhoneNumber());
+            System.out.println("Role: " + request.getUserRole());
+            System.out.println("Name: " + request.getName());
+            System.out.println("Surname: " + request.getSurname());
+            System.out.println("BloodType: " + request.getBloodType());
+            System.out.println("LastDonationDate: " + request.getLastDonationDate());
+            
             AuthenticationResponse response = authenticationService.registerUser(request);
             return ResponseEntity.ok(response);
         }catch (IllegalArgumentException e) {
+            System.err.println("=== ERROR 400 ===");
+            System.err.println("Message: " + e.getMessage());
+            e.printStackTrace();
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body(new ErrorResponse(e.getMessage()));
         } catch (Exception e){
+            System.err.println("=== ERROR 500 ===");
+            System.err.println("Message: " + e.getMessage());
+            e.printStackTrace();
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(e);
+                    .body(new ErrorResponse(e.getMessage()));
         }
     }
 
     @PostMapping("/logIn")
     public ResponseEntity<?> login(@RequestBody LoginRequest request){
         try{
+            System.out.println("=== LOGIN REQUEST ===");
+            System.out.println("Email: " + request.getEmail());
+            System.out.println("Password: " + (request.getPassword() != null ? "***" : "null"));
+            
             AuthenticationResponse response = authenticationService.login(request);
             return  ResponseEntity.ok(response);
-        }catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse("User not found"));
+        }catch (Exception e) {
+            System.err.println("=== LOGIN ERROR ===");
+            System.err.println("Message: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ErrorResponse("Email ou mot de passe incorrect"));
         }
     }
 
